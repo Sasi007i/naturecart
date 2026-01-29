@@ -1,1 +1,257 @@
-ncart.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NatureCart</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI, sans-serif;
+}
+body{
+    background:#f1f8f4;
+}
+
+/* HEADER */
+header{
+    background:#2e7d32;
+    color:white;
+    padding:15px;
+    text-align:center;
+}
+
+/* NAVBAR */
+nav{
+    display:flex;
+    justify-content:space-around;
+    background:#1b5e20;
+    padding:10px;
+}
+nav button{
+    background:none;
+    border:none;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+/* SECTIONS */
+section{
+    display:none;
+    padding:20px;
+}
+.active{
+    display:block;
+}
+
+/* LOGIN */
+.login-box{
+    max-width:350px;
+    margin:30px auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+}
+input, button{
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+}
+button{
+    background:#2e7d32;
+    color:white;
+    border:none;
+    border-radius:5px;
+}
+
+/* PRODUCTS */
+.products{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+}
+.card{
+    background:white;
+    border-radius:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+.card img{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+}
+.card div{
+    padding:10px;
+}
+.price{
+    color:#2e7d32;
+    font-weight:bold;
+}
+
+/* ADMIN */
+.admin-box{
+    max-width:400px;
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    margin:auto;
+}
+
+/* CART */
+.cart-item{
+    background:white;
+    padding:10px;
+    margin:10px 0;
+    border-radius:8px;
+}
+
+/* PAYMENT */
+.payment-box{
+    max-width:350px;
+    background:white;
+    padding:20px;
+    margin:auto;
+    border-radius:10px;
+}
+
+footer{
+    background:#1b5e20;
+    color:white;
+    text-align:center;
+    padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>🌿 NatureCart – Natural Products Store</h2>
+</header>
+
+<nav>
+    <button onclick="show('shop')">Shop</button>
+    <button onclick="show('cart')">Cart</button>
+    <button onclick="show('admin')">Admin</button>
+    <button onclick="show('payment')">Payment</button>
+</nav>
+
+<!-- LOGIN -->
+<section id="login" class="active">
+    <div class="login-box">
+        <h3>Login</h3>
+        <input id="user" placeholder="Username">
+        <input id="pass" type="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+</section>
+
+<!-- SHOP -->
+<section id="shop">
+    <h3>Products</h3>
+    <div class="products" id="productList"></div>
+</section>
+
+<!-- CART -->
+<section id="cart">
+    <h3>Your Cart</h3>
+    <div id="cartItems"></div>
+    <h3>Total: ₹<span id="total">0</span></h3>
+</section>
+
+<!-- ADMIN -->
+<section id="admin">
+    <div class="admin-box">
+        <h3>Admin Panel</h3>
+        <input id="pname" placeholder="Product Name">
+        <input id="pprice" placeholder="Price">
+        <input id="pimg" placeholder="Image URL">
+        <button onclick="addProduct()">Add Product</button>
+    </div>
+</section>
+
+<!-- PAYMENT -->
+<section id="payment">
+    <div class="payment-box">
+        <h3>Payment</h3>
+        <input placeholder="Card Number">
+        <input placeholder="Expiry Date">
+        <input placeholder="CVV">
+        <button onclick="pay()">Pay Now</button>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 NatureCart</p>
+</footer>
+
+<script>
+let products=[
+    {name:"Organic Honey",price:450,img:"https://images.unsplash.com/photo-1615485925600-97237c4fc1ec"},
+    {name:"Coconut Oil",price:600,img:"https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb"}
+];
+let cart=[];
+
+function login(){
+    document.getElementById("login").style.display="none";
+    show("shop");
+}
+
+function show(id){
+    document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    render();
+}
+
+function render(){
+    let list=document.getElementById("productList");
+    list.innerHTML="";
+    products.forEach((p,i)=>{
+        list.innerHTML+=`
+        <div class="card">
+            <img src="${p.img}">
+            <div>
+                <h4>${p.name}</h4>
+                <p class="price">₹${p.price}</p>
+                <button onclick="addCart(${i})">Add to Cart</button>
+            </div>
+        </div>`;
+    });
+}
+
+function addCart(i){
+    cart.push(products[i]);
+    alert("Added to cart");
+    updateCart();
+}
+
+function updateCart(){
+    let box=document.getElementById("cartItems");
+    let total=0;
+    box.innerHTML="";
+    cart.forEach(c=>{
+        total+=c.price;
+        box.innerHTML+=`<div class="cart-item">${c.name} - ₹${c.price}</div>`;
+    });
+    document.getElementById("total").innerText=total;
+}
+
+function addProduct(){
+    let n=pname.value, p=Number(pprice.value), i=pimg.value;
+    products.push({name:n,price:p,img:i});
+    alert("Product Added");
+    render();
+}
+
+function pay(){
+    alert("Payment Successful ✅");
+}
+render();
+</script>
+
+</body>
+</html>
